@@ -110,4 +110,37 @@ class GlowText extends HTMLElement {
 
         /* Apply animation delay to each letter */
         .glow-container span > span:nth-child(n) {
-          animation-delay: calc(0.05s
+          animation-delay: calc(0.05s * var(--letter-index));
+        }
+
+        @keyframes letter-glow {
+          0% {
+            opacity: 0;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+          }
+          66% {
+            opacity: 1;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+          }
+          77% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.7;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0);
+          }
+        }
+      </style>
+      <div class="glow-container">${tempContainer.innerHTML}</div>
+    `;
+
+    // Set custom property for animation delay
+    const spans = this.shadowRoot.querySelectorAll('.glow-container span > span');
+    spans.forEach((span, index) => {
+      span.style.setProperty('--letter-index', index);
+    });
+  }
+}
+
+// Define the custom element
+customElements.define('glow-text', GlowText);
