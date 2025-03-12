@@ -20,16 +20,14 @@ class GlowText extends HTMLElement {
 
   // Basic HTML sanitizer (whitelist allowed tags)
   sanitizeHTML(html) {
-    const allowedTags = ['strong', 'em', 'b', 'i', 'u', 'span']; // Whitelist of safe tags
+    const allowedTags = ['strong', 'em', 'b', 'i', 'u', 'span'];
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
 
-    // Remove disallowed tags and attributes
     const walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_ELEMENT, {
       acceptNode: (node) => {
         const tagName = node.tagName.toLowerCase();
         if (allowedTags.includes(tagName)) {
-          // Remove all attributes for simplicity (could whitelist specific ones if needed)
           while (node.attributes.length > 0) {
             node.removeAttribute(node.attributes[0].name);
           }
@@ -39,7 +37,7 @@ class GlowText extends HTMLElement {
       }
     });
 
-    while (walker.nextNode()) {} // Process all nodes
+    while (walker.nextNode()) {}
     return tempDiv.innerHTML;
   }
 
@@ -66,7 +64,7 @@ class GlowText extends HTMLElement {
     const textColor = this.getAttribute('text-color') || '#FFD700';
     const backgroundColor = this.getAttribute('background-color') || 'linear-gradient(135deg, #2E1A47 0%, #4B2E83 100%)';
     const fontFamily = this.getAttribute('font-family') || 'Montserrat';
-    const fontSize = this.getAttribute('font-size') || '5'; // In vw
+    const fontSize = this.getAttribute('font-size') || '40'; // In px (default changed to 40px)
     const textAlignment = this.getAttribute('text-alignment') || 'center';
 
     // Sanitize the HTML input
@@ -98,7 +96,7 @@ class GlowText extends HTMLElement {
           padding: 5%;
           max-width: 90%;
           font-family: ${fontFamily}, sans-serif;
-          font-size: ${fontSize}vw;
+          font-size: ${fontSize}px; /* Changed to px */
           font-weight: 400;
           letter-spacing: 0.3em;
           text-transform: uppercase;
@@ -112,37 +110,4 @@ class GlowText extends HTMLElement {
 
         /* Apply animation delay to each letter */
         .glow-container span > span:nth-child(n) {
-          animation-delay: calc(0.05s * var(--letter-index));
-        }
-
-        @keyframes letter-glow {
-          0% {
-            opacity: 0;
-            text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
-          }
-          66% {
-            opacity: 1;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
-          }
-          77% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0.7;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0);
-          }
-        }
-      </style>
-      <div class="glow-container">${tempContainer.innerHTML}</div>
-    `;
-
-    // Set custom property for animation delay
-    const spans = this.shadowRoot.querySelectorAll('.glow-container span > span');
-    spans.forEach((span, index) => {
-      span.style.setProperty('--letter-index', index);
-    });
-  }
-}
-
-// Define the custom element
-customElements.define('glow-text', GlowText);
+          animation-delay: calc(0.05s
