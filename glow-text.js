@@ -41,13 +41,14 @@ class GlowText extends HTMLElement {
     return tempDiv.innerHTML;
   }
 
-  // Spanize text nodes for animation
+  // Spanize text nodes for animation without gaps
   spanizeTextNodes(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       const text = node.textContent.trim();
       if (text) {
         const spanContainer = document.createElement('span');
-        const spanized = text.split('').map(char => `<span>${char}</span>`).join('');
+        spanContainer.className = 'letter-group'; // Add a class for styling
+        const spanized = text.split('').map(char => `<span class="letter">${char}</span>`).join('');
         spanContainer.innerHTML = spanized;
         node.parentNode.replaceChild(spanContainer, node);
         return spanContainer;
@@ -64,7 +65,7 @@ class GlowText extends HTMLElement {
     const textColor = this.getAttribute('text-color') || '#FFD700';
     const backgroundColor = this.getAttribute('background-color') || 'linear-gradient(135deg, #2E1A47 0%, #4B2E83 100%)';
     const fontFamily = this.getAttribute('font-family') || 'Montserrat';
-    const fontSize = this.getAttribute('font-size') || '40'; // In px (default changed to 40px)
+    const fontSize = this.getAttribute('font-size') || '40'; // In px
     const textAlignment = this.getAttribute('text-alignment') || 'center';
 
     // Sanitize the HTML input
@@ -96,20 +97,26 @@ class GlowText extends HTMLElement {
           padding: 5%;
           max-width: 90%;
           font-family: ${fontFamily}, sans-serif;
-          font-size: ${fontSize}px; /* Changed to px */
+          font-size: ${fontSize}px;
           font-weight: 400;
-          letter-spacing: 0.3em;
+          letter-spacing: 0.3em; /* Applies to overall text */
           text-transform: uppercase;
           color: ${textColor};
         }
 
-        .glow-container span > span {
-          display: inline-block;
+        .letter-group {
+          display: inline; /* Ensure no gaps between groups */
+        }
+
+        .letter {
+          display: inline; /* Remove inline-block gaps */
           animation: letter-glow 0.7s ease both;
+          margin: 0; /* Remove any default margins */
+          padding: 0; /* Remove any default padding */
         }
 
         /* Apply animation delay to each letter */
-        .glow-container span > span:nth-child(n) {
+        .letter:nth-child(n) {
           animation-delay: calc(0.05s * var(--letter-index));
         }
 
@@ -135,9 +142,9 @@ class GlowText extends HTMLElement {
     `;
 
     // Set custom property for animation delay
-    const spans = this.shadowRoot.querySelectorAll('.glow-container span > span');
-    spans.forEach((span, index) => {
-      span.style.setProperty('--letter-index', index);
+    const letters = this.shadowRoot.querySelectorAll('.letter');
+    letters.forEach((letter, index) => {
+      letter.style.setProperty('--letter-index', index);
     });
   }
 }
