@@ -99,7 +99,7 @@ class GlowText extends HTMLElement {
           font-family: ${fontFamily}, sans-serif;
           font-size: ${fontSize}px;
           font-weight: 400;
-          letter-spacing: 0.3em; /* Applies to overall text */
+          letter-spacing: 0em; /* Applies to overall text */
           text-transform: uppercase;
           color: ${textColor};
         }
