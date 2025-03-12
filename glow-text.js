@@ -10,6 +10,7 @@ class GlowText extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
+      console.log(`Attribute ${name} changed from ${oldValue} to ${newValue}`); // Debug log
       this.render();
     }
   }
@@ -68,6 +69,9 @@ class GlowText extends HTMLElement {
     const fontSize = this.getAttribute('font-size') || '40'; // In px
     const textAlignment = this.getAttribute('text-alignment') || 'center';
 
+    // Log current attribute values for debugging
+    console.log('Rendering with:', { text: rawText, textColor, backgroundColor, fontFamily, fontSize, textAlignment });
+
     // Sanitize the HTML input
     const sanitizedHTML = this.sanitizeHTML(rawText);
 
@@ -99,21 +103,19 @@ class GlowText extends HTMLElement {
           font-family: ${fontFamily}, sans-serif;
           font-size: ${fontSize}px;
           color: ${textColor};
-          /* Removed letter-spacing and other font overrides to let Wix defaults apply */
         }
 
         .letter-group {
-          display: inline; /* Ensure no gaps between groups */
+          display: inline;
         }
 
         .letter {
-          display: inline; /* Remove inline-block gaps */
+          display: inline;
           animation: letter-glow 0.7s ease both;
           margin: 0;
           padding: 0;
         }
 
-        /* Apply animation delay to each letter */
         .letter:nth-child(n) {
           animation-delay: calc(0.05s * var(--letter-index));
         }
