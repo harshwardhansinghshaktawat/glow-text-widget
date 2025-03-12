@@ -47,7 +47,7 @@ class GlowText extends HTMLElement {
       const text = node.textContent.trim();
       if (text) {
         const spanContainer = document.createElement('span');
-        spanContainer.className = 'letter-group'; // Add a class for styling
+        spanContainer.className = 'letter-group';
         const spanized = text.split('').map(char => `<span class="letter">${char}</span>`).join('');
         spanContainer.innerHTML = spanized;
         node.parentNode.replaceChild(spanContainer, node);
@@ -98,10 +98,8 @@ class GlowText extends HTMLElement {
           max-width: 90%;
           font-family: ${fontFamily}, sans-serif;
           font-size: ${fontSize}px;
-          font-weight: 400;
-          letter-spacing: 0em; /* Applies to overall text */
-          text-transform: uppercase;
           color: ${textColor};
+          /* Removed letter-spacing and other font overrides to let Wix defaults apply */
         }
 
         .letter-group {
@@ -111,8 +109,8 @@ class GlowText extends HTMLElement {
         .letter {
           display: inline; /* Remove inline-block gaps */
           animation: letter-glow 0.7s ease both;
-          margin: 0; /* Remove any default margins */
-          padding: 0; /* Remove any default padding */
+          margin: 0;
+          padding: 0;
         }
 
         /* Apply animation delay to each letter */
