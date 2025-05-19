@@ -2,6 +2,8 @@ class GlowText extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.isVisible = false;
+    this.observer = null;
   }
 
   static get observedAttributes() {
@@ -17,6 +19,54 @@ class GlowText extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this.setupIntersectionObserver();
+  }
+
+  disconnectedCallback() {
+    // Clean up the observer when element is removed
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+  }
+
+  setupIntersectionObserver() {
+    // Create an Intersection Observer instance
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // Check if the element is intersecting with the viewport
+        if (entry.isIntersecting) {
+          this.isVisible = true;
+          this.startAnimation();
+        } else {
+          this.isVisible = false;
+          this.resetAnimation();
+        }
+      });
+    }, {
+      // Options for the observer
+      threshold: 0.1 // Trigger when at least 10% of the element is visible
+    });
+
+    // Start observing the element
+    this.observer.observe(this);
+  }
+
+  startAnimation() {
+    const container = this.shadowRoot.querySelector('.glow-container');
+    if (container) {
+      container.classList.add('animate');
+    }
+  }
+
+  resetAnimation() {
+    const container = this.shadowRoot.querySelector('.glow-container');
+    if (container) {
+      container.classList.remove('animate');
+      
+      // Force a reflow to restart animation when it becomes visible again
+      void container.offsetWidth;
+    }
   }
 
   // Basic HTML sanitizer (whitelist allowed tags)
@@ -111,12 +161,18 @@ class GlowText extends HTMLElement {
 
         .letter {
           display: inline;
+          opacity: 0.3;
+          text-shadow: none;
+        }
+
+        /* Only apply animation when container has animate class */
+        .animate .letter {
           animation: letter-glow 0.7s ease both;
           margin: 0;
           padding: 0;
         }
 
-        .letter:nth-child(n) {
+        .animate .letter:nth-child(n) {
           animation-delay: calc(0.05s * var(--letter-index));
         }
 
@@ -146,6 +202,11 @@ class GlowText extends HTMLElement {
     letters.forEach((letter, index) => {
       letter.style.setProperty('--letter-index', index);
     });
+
+    // Start animation if element is already visible
+    if (this.isVisible) {
+      this.startAnimation();
+    }
   }
 }
 
